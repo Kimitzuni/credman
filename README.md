@@ -7,7 +7,7 @@ As credman is written in Java, you will need to have Java installed on your syst
 ### Installing Java on Linux
 Arch:
 ```sh
-# pacman -Sy jre-openjdk
+# pacman -Sy jre-openjdk jdk-openjdk
 ```
 
 ### Installing Java on Windows
