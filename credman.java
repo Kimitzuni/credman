@@ -59,17 +59,17 @@ class credman {
             "╚██████╗██║  ██║███████╗██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║\n" +
             " ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝\n" +
             "v" + version + " running on " + OSName + "\n" +
-            "Configuration files are located at " + ConfigPath + "\n\n");
+            "Configuration files are located at " + ConfigPath);
 
             getAvailableCreds();        
     }
 
     public static void getAvailableCreds() {
         try {
-            File inputFile = new File(ConfigPath + DirSep + ConfigFile);
+            File ConfigXML = new File(ConfigPath + DirSep + ConfigFile);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(inputFile);
+            Document doc = dBuilder.parse(ConfigXML);
             doc.getDocumentElement().normalize();
             NodeList nList = doc.getElementsByTagName("entry");
             
@@ -78,9 +78,10 @@ class credman {
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
-                    System.out.println("Credential: " + eElement.getAttribute("name"));
-                    System.out.println("Username: " + eElement .getElementsByTagName("username") .item(0) .getTextContent());
-                    System.out.println("Password: " + eElement .getElementsByTagName("password") .item(0) .getTextContent());
+                    System.out.println("\n==> " + eElement.getAttribute("name") + " <==\n" +
+                        "Domain: " + eElement.getElementsByTagName("site").item(0).getTextContent() + "\n" +
+                        "Username: " + eElement.getElementsByTagName("username").item(0).getTextContent() + "\n" +
+                        "Password: " + eElement.getElementsByTagName("password").item(0).getTextContent());
                 }
             }
         } catch (Exception e) {
