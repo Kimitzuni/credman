@@ -25,14 +25,12 @@ class credman {
     public static String ConfigFile = "creds.xml";
     public static String ConfigDir = "credman";
     public static String ConfigPath = "";
-    public static double version = 0.1;
+    public static double version = 0.131;
 
     public static void main(String[] args) {
 //        System.out.println(OSName);
 
-        setupVars();
-        createDirs();
-        menu();
+        setupVars(); createDirs(); logo(); menu();
     }
 
     public static void setupVars() {
@@ -50,21 +48,46 @@ class credman {
 		boolean state = Path.mkdir();
     }
 
-    public static void menu() {
+    public static void logo() {
         System.out.println(
-            " ██████╗██████╗ ███████╗██████╗ ███╗   ███╗ █████╗ ███╗   ██╗\n" +
-            "██╔════╝██╔══██╗██╔════╝██╔══██╗████╗ ████║██╔══██╗████╗  ██║\n" +
-            "██║     ██████╔╝█████╗  ██║  ██║██╔████╔██║███████║██╔██╗ ██║\n" +
-            "██║     ██╔══██╗██╔══╝  ██║  ██║██║╚██╔╝██║██╔══██║██║╚██╗██║\n" +
-            "╚██████╗██║  ██║███████╗██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║\n" +
-            " ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝\n" +
-            "v" + version + " running on " + OSName + "\n" +
-            "Configuration files are located at " + ConfigPath);
-
-            getAvailableCreds();        
+        " ██████╗██████╗ ███████╗██████╗ ███╗   ███╗ █████╗ ███╗   ██╗\n" +
+        "██╔════╝██╔══██╗██╔════╝██╔══██╗████╗ ████║██╔══██╗████╗  ██║\n" +
+        "██║     ██████╔╝█████╗  ██║  ██║██╔████╔██║███████║██╔██╗ ██║\n" +
+        "██║     ██╔══██╗██╔══╝  ██║  ██║██║╚██╔╝██║██╔══██║██║╚██╗██║\n" +
+        "╚██████╗██║  ██║███████╗██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║\n" +
+        " ╚═════╝╚═╝  ╚═╝╚══════╝╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝\n" +
+        "v" + version + " running on " + OSName + "\n" +
+        "Configuration files are located at " + ConfigPath);
     }
 
-    public static void getAvailableCreds() {
+    public static void menu() {
+        Scanner readMenuOpt = new Scanner(System.in);
+        Scanner getCredential = new Scanner(System.in);
+
+        System.out.println("\n" + 
+            "  1) List Available Credentials\n" +
+            "  2) List Credential Info\n" + 
+            "  3) Credits/License\n" +
+            "  4) Exit"
+        );
+
+        String menuOpt = readMenuOpt.nextLine();
+        switch (menuOpt) {
+            case "1": 
+                System.out.println("\nAvailable Credentials\n");
+                parseXMLData(1, "");
+                menu();
+
+            case "2":
+                System.out.println("\nGet Info for Which Credential? ");
+                String credential = getCredential.nextLine();
+                parseXMLData(2, credential);
+                menu();
+        }
+
+    }
+
+    public static void parseXMLData(int operation, String credential) {
         try {
             File ConfigXML = new File(ConfigPath + DirSep + ConfigFile);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -78,15 +101,26 @@ class credman {
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
-                    System.out.println("\n==> " + eElement.getAttribute("name") + " <==\n" +
-                        "Domain: " + eElement.getElementsByTagName("site").item(0).getTextContent() + "\n" +
-                        "Username: " + eElement.getElementsByTagName("username").item(0).getTextContent() + "\n" +
-                        "Password: " + eElement.getElementsByTagName("password").item(0).getTextContent());
+
+
+                    switch(operation) {
+                        case 1:
+                            System.out.println(eElement.getAttribute("name"));
+
+                        case 2:
+                            if (eElement.getAttribute("name").toLowerCase().indexOf(credential.toLowerCase()) != -1) {
+                                System.out.println("\n" + 
+                                "Domain: " + eElement.getElementsByTagName("site").item(0).getTextContent() + "\n" +
+                                "Username: " + eElement.getElementsByTagName("username").item(0).getTextContent() + "\n" +
+                                "Password: " + eElement.getElementsByTagName("password").item(0).getTextContent());
+                            }
+                    }
+
+                        
                 }
             }
         } catch (Exception e) {
-		System.out.println("Could not open " + ConfigPath + DirSep + ConfigFile);
-//            e.printStackTrace();
+    		System.out.println("Could not open " + ConfigPath + DirSep + ConfigFile);
         }
     }
 }
